@@ -9,7 +9,7 @@ import type { Wallet } from '@cosmos-kit/core';
 export const EIGHTSAF_EXTENSION_INFO: Wallet = {
   name: 'eightsaf-extension',
   prettyName: 'Eightsaf',
-  logo: 'https://cdn.jsdelivr.net/npm/@safrochain/wallet-kit/assets/eightsaf.svg',
+  logo: 'https://cdn.jsdelivr.net/gh/Eightblockchain/safrochain-wallet-kit@main/assets/eightsaf.svg',
   mode: 'extension',
   mobileDisabled: true,
   rejectMessage: {
