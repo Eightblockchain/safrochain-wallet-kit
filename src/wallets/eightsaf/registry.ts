@@ -9,7 +9,7 @@ import type { Wallet } from '@cosmos-kit/core';
 export const EIGHTSAF_EXTENSION_INFO: Wallet = {
   name: 'eightsaf-extension',
   prettyName: 'Eightsaf',
-  logo: 'https://raw.githubusercontent.com/safrochain/assets/main/wallets/eightsaf/icon.png',
+  logo: 'https://cdn.jsdelivr.net/npm/@safrochain/wallet-kit/assets/eightsaf.svg',
   mode: 'extension',
   mobileDisabled: true,
   rejectMessage: {
@@ -18,12 +18,9 @@ export const EIGHTSAF_EXTENSION_INFO: Wallet = {
   connectEventNamesOnWindow: ['eightsaf_keystorechange'],
   downloads: [
     {
-      link: 'https://chrome.google.com/webstore/detail/eightsaf',
+      link: 'https://chromewebstore.google.com/detail/eightsaf-wallet/hpemogcffkhcoegjbphljmbjepibnpjj',
       browser: 'chrome',
     },
-    {
-      link: 'https://addons.mozilla.org/en-US/firefox/addon/eightsaf',
-      browser: 'firefox',
-    },
+    // Firefox extension not yet published — add entry when available
   ],
 };
