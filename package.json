@@ -1,0 +1,49 @@
+{
+  "name": "@safrochain/wallet-kit",
+  "version": "0.1.0",
+  "description": "Plug-and-play wallet connection toolkit for Safrochain dApps",
+  "keywords": ["safrochain", "cosmos", "wallet", "cosmos-kit"],
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "CONTRIBUTING_WALLET.md"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run build"
+  },
+  "peerDependencies": {
+    "react": ">=18",
+    "@cosmos-kit/react": "^2",
+    "@cosmos-kit/core": "^2",
+    "chain-registry": "^1"
+  },
+  "dependencies": {
+    "@cosmos-kit/keplr": "^2.17.0",
+    "@cosmos-kit/leap": "^2.17.0",
+    "@cosmos-kit/cosmostation": "^2.17.0"
+  },
+  "devDependencies": {
+    "@cosmos-kit/core": "^2.18.0",
+    "@cosmos-kit/react": "^2.24.0",
+    "@cosmjs/amino": "^0.32.0",
+    "@cosmjs/proto-signing": "^0.32.0",
+    "@types/react": "^18.3.0",
+    "chain-registry": "^1.69.0",
+    "react": "^18.3.0",
+    "tsup": "^8.3.0",
+    "typescript": "^5.6.0"
+  }
+}
