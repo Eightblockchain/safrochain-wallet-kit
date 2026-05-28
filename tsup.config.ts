@@ -14,7 +14,6 @@ export default defineConfig({
     'react-dom',
     '@cosmos-kit/react',
     '@cosmos-kit/core',
-    'chain-registry',
   ],
   // No esbuild plugins — consumers using vite-plugin-node-polyfills require a
   // plugin-free build input.
