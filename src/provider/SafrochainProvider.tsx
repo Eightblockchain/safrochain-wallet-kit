@@ -1,4 +1,4 @@
-import React, { type ReactElement } from 'react';
+import React, { useMemo, type ReactElement } from 'react';
 import { ChainProvider } from '@cosmos-kit/react';
 import type { MainWalletBase, EndpointOptions, WalletModalProps } from '@cosmos-kit/core';
 import { safrochain, safroAssets } from '../chain/safrochain';
@@ -33,6 +33,17 @@ export interface SafrochainProviderProps {
    * When omitted, cosmos-kit's built-in modal is used.
    */
   walletModal?: (props: WalletModalProps) => ReactElement;
+
+  /**
+   * When true, cosmos-kit skips upfront endpoint reachability checks and
+   * connects lazily on first use.
+   *
+   * Useful for local devnets or custom endpoints that may not be reachable
+   * at app startup.
+   *
+   * @default false
+   */
+  lazyEndpoints?: boolean;
 }
 
 /**
@@ -68,25 +79,35 @@ export function SafrochainProvider({
   restEndpoint,
   extraWallets,
   walletModal,
+  lazyEndpoints = false,
 }: SafrochainProviderProps) {
-  const allWallets: MainWalletBase[] = extraWallets
-    ? [...defaultWallets, ...extraWallets]
-    : defaultWallets;
+  // Stable reference: prevents ChainProvider from tearing down and rebuilding
+  // all wallet connections whenever a parent component re-renders.
+  const allWallets = useMemo<MainWalletBase[]>(
+    () => (extraWallets ? [...defaultWallets, ...extraWallets] : defaultWallets),
+    // extraWallets is typically a stable module-level array; the identity check
+    // is intentional here.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [extraWallets],
+  );
 
   // Build endpointOptions only when the caller provides overrides so we don't
   // shadow the chain's default endpoints unnecessarily.
-  const endpointOptions: EndpointOptions | undefined =
-    rpcEndpoint || restEndpoint
-      ? {
-          isLazy: true,
-          endpoints: {
-            safrochain: {
-              ...(rpcEndpoint && { rpc: [rpcEndpoint] }),
-              ...(restEndpoint && { rest: [restEndpoint] }),
+  const endpointOptions = useMemo<EndpointOptions | undefined>(
+    () =>
+      rpcEndpoint || restEndpoint
+        ? {
+            isLazy: lazyEndpoints,
+            endpoints: {
+              safrochain: {
+                ...(rpcEndpoint && { rpc: [rpcEndpoint] }),
+                ...(restEndpoint && { rest: [restEndpoint] }),
+              },
             },
-          },
-        }
-      : undefined;
+          }
+        : undefined,
+    [rpcEndpoint, restEndpoint, lazyEndpoints],
+  );
 
   return (
     <ChainProvider
