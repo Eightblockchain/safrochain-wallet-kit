@@ -1,6 +1,12 @@
 import React, { useMemo, type ReactElement } from 'react';
 import { ChainProvider } from '@cosmos-kit/react';
-import type { MainWalletBase, EndpointOptions, WalletModalProps } from '@cosmos-kit/core';
+import type {
+  MainWalletBase,
+  EndpointOptions,
+  WalletModalProps,
+  WalletConnectOptions,
+  LogLevel,
+} from '@cosmos-kit/core';
 import { safrochain, safroAssets, safrochainMainnet, safroAssetsMainnet } from '../chain/safrochain';
 import { wallets as defaultWallets } from '../wallets';
 
@@ -30,6 +36,34 @@ export interface SafrochainProviderProps {
    * @example 'https://rest.my-node.com'
    */
   restEndpoint?: string;
+
+  /**
+   * WalletConnect configuration required for mobile wallets
+   * (Keplr Mobile, Leap Mobile, Cosmostation Mobile).
+   *
+   * When omitted, mobile WalletConnect wallets are automatically excluded
+   * from the wallet list — preventing console errors about a missing
+   * WalletConnect project ID.
+   *
+   * @example
+   * ```tsx
+   * <SafrochainProvider
+   *   walletConnectOptions={{ signClient: { projectId: 'YOUR_PROJECT_ID' } }}
+   * >
+   * ```
+   */
+  walletConnectOptions?: WalletConnectOptions;
+
+  /**
+   * cosmos-kit internal log level.
+   *
+   * Defaults to `'NONE'` to suppress expected noise such as
+   * "initClientError: extension not installed" for wallets the user hasn't
+   * installed. Set to `'WARN'` or `'DEBUG'` while debugging connection issues.
+   *
+   * @default 'NONE'
+   */
+  logLevel?: LogLevel;
 
   /**
    * Additional wallet adapters to include alongside the built-in set
@@ -88,6 +122,8 @@ export function SafrochainProvider({
   network = 'testnet',
   rpcEndpoint,
   restEndpoint,
+  walletConnectOptions,
+  logLevel = 'NONE',
   extraWallets,
   walletModal,
   lazyEndpoints = false,
@@ -98,13 +134,16 @@ export function SafrochainProvider({
 
   // Stable reference: prevents ChainProvider from tearing down and rebuilding
   // all wallet connections whenever a parent component re-renders.
-  const allWallets = useMemo<MainWalletBase[]>(
-    () => (extraWallets ? [...defaultWallets, ...extraWallets] : defaultWallets),
-    // extraWallets is typically a stable module-level array; the identity check
-    // is intentional here.
+  // Mobile WalletConnect wallets are excluded when no walletConnectOptions are
+  // provided — they require a WalletConnect project ID and will log errors
+  // without one.
+  const allWallets = useMemo<MainWalletBase[]>(() => {
+    const base = walletConnectOptions
+      ? defaultWallets
+      : defaultWallets.filter(w => w.walletInfo.mode !== 'wallet-connect');
+    return extraWallets ? [...base, ...extraWallets] : base;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [extraWallets],
-  );
+  }, [walletConnectOptions, extraWallets]);
 
   // Build endpointOptions only when the caller provides overrides so we don't
   // shadow the chain's default endpoints unnecessarily.
@@ -130,6 +169,8 @@ export function SafrochainProvider({
       assetLists={[assetDef]}
       wallets={allWallets}
       throwErrors={false}
+      logLevel={logLevel}
+      walletConnectOptions={walletConnectOptions}
       endpointOptions={endpointOptions}
       walletModal={walletModal}
     >
