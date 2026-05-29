@@ -1,6 +1,6 @@
 {
   "name": "@safrochain/wallet-kit",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "Plug-and-play wallet connection toolkit for Safrochain dApps",
   "keywords": [
     "safrochain",
