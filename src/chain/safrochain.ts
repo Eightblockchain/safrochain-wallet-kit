@@ -47,8 +47,8 @@ export const safrochain: Chain = {
     staking_tokens: [{ denom: 'usaf' }],
   },
   apis: {
-    rpc: [{ address: 'https://rpc-testnet.safrochain.com', provider: 'Safrochain' }],
-    rest: [{ address: 'https://rest-testnet.safrochain.com', provider: 'Safrochain' }],
+    rpc: [{ address: 'https://rpc.testnet.safrochain.com', provider: 'Safrochain' }],
+    rest: [{ address: 'https://rest.testnet.safrochain.com', provider: 'Safrochain' }],
   },
   explorers: [
     {

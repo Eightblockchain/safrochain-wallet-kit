@@ -1,8 +1,13 @@
 {
   "name": "@safrochain/wallet-kit",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Plug-and-play wallet connection toolkit for Safrochain dApps",
-  "keywords": ["safrochain", "cosmos", "wallet", "cosmos-kit"],
+  "keywords": [
+    "safrochain",
+    "cosmos",
+    "wallet",
+    "cosmos-kit"
+  ],
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -36,7 +41,8 @@
     "build": "tsup",
     "dev": "tsup --watch",
     "typecheck": "tsc --noEmit",
-    "prepublishOnly": "npm run build"
+    "prepare": "npm run build",
+    "prepublishOnly": "npm run typecheck"
   },
   "publishConfig": {
     "access": "public"
