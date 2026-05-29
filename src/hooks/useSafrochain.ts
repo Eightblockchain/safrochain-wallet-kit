@@ -40,9 +40,11 @@ export interface UseSafrochain {
 /**
  * useSafrochain
  *
- * A thin, typed wrapper around cosmos-kit's `useChain('safrochain')`.
+ * A thin, typed wrapper around cosmos-kit's `useChain`.
  * The hook must be used inside a `<SafrochainProvider>` (or any
- * `<ChainProvider>` that includes the `safrochain` chain).
+ * `<ChainProvider>` that includes the Safrochain chain).
+ *
+ * Pass the same `network` value you used on `<SafrochainProvider>`.
  *
  * @example
  * ```tsx
@@ -54,10 +56,20 @@ export interface UseSafrochain {
  *   <button onClick={openView}>Connect wallet</button>
  * );
  * ```
+ *
+ * @example Mainnet
+ * ```tsx
+ * // App.tsx
+ * <SafrochainProvider network="mainnet"><App /></SafrochainProvider>
+ *
+ * // inside App
+ * const { address } = useSafrochain('mainnet');
+ * ```
  */
-export function useSafrochain(): UseSafrochain {
+export function useSafrochain(network: 'testnet' | 'mainnet' = 'testnet'): UseSafrochain {
+  const chainName = network === 'mainnet' ? 'safrochain-mainnet' : 'safrochain';
   const { address, status, connect, disconnect, openView, username, wallet } =
-    useChain('safrochain');
+    useChain(chainName);
 
   return {
     address,

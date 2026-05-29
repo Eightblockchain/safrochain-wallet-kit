@@ -1,5 +1,5 @@
 // ─── Chain config ────────────────────────────────────────────────────────────
-export { safrochain, safroAssets } from './chain/safrochain';
+export { safrochain, safroAssets, safrochainMainnet, safroAssetsMainnet } from './chain/safrochain';
 
 // ─── Wallets ─────────────────────────────────────────────────────────────────
 export {

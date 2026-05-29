@@ -1,11 +1,21 @@
 import React, { useMemo, type ReactElement } from 'react';
 import { ChainProvider } from '@cosmos-kit/react';
 import type { MainWalletBase, EndpointOptions, WalletModalProps } from '@cosmos-kit/core';
-import { safrochain, safroAssets } from '../chain/safrochain';
+import { safrochain, safroAssets, safrochainMainnet, safroAssetsMainnet } from '../chain/safrochain';
 import { wallets as defaultWallets } from '../wallets';
 
 export interface SafrochainProviderProps {
   children: React.ReactNode;
+
+  /**
+   * Which network to connect to.
+   *
+   * - `'testnet'` — `safrochain-testnet-1`, RPC/REST at `*.testnet.safrochain.com` (default)
+   * - `'mainnet'` — `safrochain-1`, RPC/REST at `*.safrochain.com` (update endpoints when live)
+   *
+   * @default 'testnet'
+   */
+  network?: 'testnet' | 'mainnet';
 
   /**
    * Override the default RPC endpoint.
@@ -75,12 +85,17 @@ export interface SafrochainProviderProps {
  */
 export function SafrochainProvider({
   children,
+  network = 'testnet',
   rpcEndpoint,
   restEndpoint,
   extraWallets,
   walletModal,
   lazyEndpoints = false,
 }: SafrochainProviderProps) {
+  const chainDef = network === 'mainnet' ? safrochainMainnet : safrochain;
+  const assetDef = network === 'mainnet' ? safroAssetsMainnet : safroAssets;
+  const chainName = chainDef.chain_name;
+
   // Stable reference: prevents ChainProvider from tearing down and rebuilding
   // all wallet connections whenever a parent component re-renders.
   const allWallets = useMemo<MainWalletBase[]>(
@@ -99,20 +114,20 @@ export function SafrochainProvider({
         ? {
             isLazy: lazyEndpoints,
             endpoints: {
-              safrochain: {
+              [chainName]: {
                 ...(rpcEndpoint && { rpc: [rpcEndpoint] }),
                 ...(restEndpoint && { rest: [restEndpoint] }),
               },
             },
           }
         : undefined,
-    [rpcEndpoint, restEndpoint, lazyEndpoints],
+    [chainName, rpcEndpoint, restEndpoint, lazyEndpoints],
   );
 
   return (
     <ChainProvider
-      chains={[safrochain]}
-      assetLists={[safroAssets]}
+      chains={[chainDef]}
+      assetLists={[assetDef]}
       wallets={allWallets}
       throwErrors={false}
       endpointOptions={endpointOptions}
