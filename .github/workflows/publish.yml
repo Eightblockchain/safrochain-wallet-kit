@@ -3,7 +3,8 @@ name: Publish to npm
 on:
   push:
     tags:
-      - '@safrochain/wallet-kit@*'   # triggers on tags like @safrochain/wallet-kit@0.3.0
+      - 'v*'                         # npm version patch/minor/major → v0.3.1
+      - '@safrochain/wallet-kit@*'   # manual tags → @safrochain/wallet-kit@0.3.0
 
 jobs:
   publish:
