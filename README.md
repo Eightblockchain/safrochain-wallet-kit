@@ -11,7 +11,14 @@ building in minutes.
 ## Installation
 
 ```bash
+# npm
 npm install @safrochain/wallet-kit @cosmos-kit/react @cosmos-kit/core
+
+# pnpm
+pnpm add @safrochain/wallet-kit @cosmos-kit/react @cosmos-kit/core
+
+# yarn
+yarn add @safrochain/wallet-kit @cosmos-kit/react @cosmos-kit/core
 ```
 
 > **Why the extra packages?**
@@ -23,7 +30,14 @@ npm install @safrochain/wallet-kit @cosmos-kit/react @cosmos-kit/core
 **For the built-in wallet selection modal** (optional):
 
 ```bash
+# npm
 npm install @interchain-ui/react
+
+# pnpm
+pnpm add @interchain-ui/react
+
+# yarn
+yarn add @interchain-ui/react
 ```
 
 Also add the styles import once in your app entry point:
