@@ -14,8 +14,11 @@ building in minutes.
 npm install @safrochain/wallet-kit @cosmos-kit/react @cosmos-kit/core
 ```
 
-> **Note** — `@cosmos-kit/core` and `@cosmos-kit/react` are peer dependencies.
-> You must install them alongside this package.
+> **Why the extra packages?**
+> `@cosmos-kit/react` and `@cosmos-kit/core` are **peer dependencies** — they are
+> not bundled inside `@safrochain/wallet-kit`. You must install them in your project.
+> Copying only `npm i @safrochain/wallet-kit` from the npm page will leave them out
+> and cause a runtime crash (`Cannot find module '@cosmos-kit/react'`).
 
 **For the built-in wallet selection modal** (optional):
 
@@ -23,7 +26,13 @@ npm install @safrochain/wallet-kit @cosmos-kit/react @cosmos-kit/core
 npm install @interchain-ui/react
 ```
 
-If you prefer to provide your own `walletModal`, this package is not required.
+Also add the styles import once in your app entry point:
+
+```ts
+import '@interchain-ui/react/styles';
+```
+
+If you provide a custom `walletModal` prop to `<SafrochainProvider>`, this package is not required.
 
 ---
 
