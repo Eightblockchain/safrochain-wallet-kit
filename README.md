@@ -94,9 +94,13 @@ export default function App() {
 | Prop | Type | Default | Description |
 |---|---|---|---|
 | `children` | `ReactNode` | — | Your app tree |
-| `rpcEndpoint` | `string` | testnet RPC | Override the RPC endpoint |
-| `restEndpoint` | `string` | testnet REST | Override the REST (LCD) endpoint |
-| `extraWallets` | `MainWalletBase[]` | `[]` | Append custom wallet adapters |
+| `network` | `'testnet' \| 'mainnet'` | `'testnet'` | Which network to connect to |
+| `rpcEndpoint` | `string` | network RPC | Override the RPC endpoint |
+| `restEndpoint` | `string` | network REST | Override the REST (LCD) endpoint |
+| `wallets` | `MainWalletBase[]` | all built-in | Replace the wallet list entirely |
+| `extraWallets` | `MainWalletBase[]` | `[]` | Append wallets to the default set |
+| `walletConnectOptions` | `WalletConnectOptions` | — | WalletConnect config — enables mobile wallets |
+| `logLevel` | `LogLevel` | `'NONE'` | cosmos-kit log level (`'NONE'` \| `'WARN'` \| `'DEBUG'`) |
 | `walletModal` | `(props: WalletModalProps) => ReactElement` | cosmos-kit default | Custom wallet-selection modal |
 | `lazyEndpoints` | `boolean` | `false` | Skip upfront endpoint reachability checks |
 
@@ -119,26 +123,56 @@ interface UseSafrochain {
 
 ---
 
-## Wallets
+## Filtering wallets
 
-The `wallets` export is a pre-assembled array ready to pass to
-`ChainProvider.wallets`:
+By default `SafrochainProvider` includes Eightsaf, Keplr, Leap, and
+Cosmostation (extension variants only). Use the `wallets` prop to show only
+the wallets your app needs:
+
+```tsx
+import {
+  SafrochainProvider,
+  eightsafWallets,
+  keplrWallets,
+} from '@safrochain/wallet-kit';
+
+// Show only Eightsaf and Keplr
+<SafrochainProvider wallets={[...eightsafWallets, ...keplrWallets]}>
+  <App />
+</SafrochainProvider>
+```
+
+Available wallet arrays:
 
 | Export | Contents |
 |---|---|
-| `wallets` | Eightsaf + Keplr + Leap + Cosmostation |
-| `eightsafWallets` | Eightsaf extension only |
-| `keplrWallets` | Keplr (via `@cosmos-kit/keplr`) |
-| `leapWallets` | Leap (via `@cosmos-kit/leap`) |
-| `cosmostationWallets` | Cosmostation (via `@cosmos-kit/cosmostation`) |
+| `eightsafWallets` | Eightsaf extension |
+| `keplrWallets` | Keplr extension + Keplr Mobile |
+| `leapWallets` | Leap extension + Leap Mobile |
+| `cosmostationWallets` | Cosmostation extension + Cosmostation Mobile |
 
-To use a subset or add a custom wallet:
+**Adding a wallet to the default set**
 
 ```tsx
-import { SafrochainProvider, keplrWallets, MyCustomWallet } from '@safrochain/wallet-kit';
+import { SafrochainProvider } from '@safrochain/wallet-kit';
+import { MyCustomWallet } from './my-wallet';
 
 <SafrochainProvider extraWallets={[new MyCustomWallet()]}>
-  ...
+  <App />
+</SafrochainProvider>
+```
+
+**Enabling mobile wallets (WalletConnect)**
+
+Mobile wallets are excluded by default because they require a
+[WalletConnect project ID](https://cloud.walletconnect.com/). Pass one to
+re-enable them:
+
+```tsx
+<SafrochainProvider
+  walletConnectOptions={{ signClient: { projectId: 'YOUR_WC_PROJECT_ID' } }}
+>
+  <App />
 </SafrochainProvider>
 ```
 

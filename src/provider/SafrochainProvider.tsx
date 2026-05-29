@@ -66,8 +66,28 @@ export interface SafrochainProviderProps {
   logLevel?: LogLevel;
 
   /**
+   * Completely replace the default wallet list with your own selection.
+   *
+   * Use the named wallet exports from this package to build the list:
+   *
+   * @example Only Keplr and Eightsaf
+   * ```tsx
+   * import { keplrWallets, eightsafWallets } from '@safrochain/wallet-kit';
+   *
+   * <SafrochainProvider wallets={[...eightsafWallets, ...keplrWallets]}>
+   * ```
+   *
+   * When omitted, all built-in wallets are used (Eightsaf + Keplr + Leap +
+   * Cosmostation), with WalletConnect mobile wallets excluded unless
+   * `walletConnectOptions` is also provided.
+   */
+  wallets?: MainWalletBase[];
+
+  /**
    * Additional wallet adapters to include alongside the built-in set
    * (Eightsaf + Keplr + Leap + Cosmostation).
+   *
+   * Ignored when `wallets` is provided.
    */
   extraWallets?: MainWalletBase[];
 
@@ -124,6 +144,7 @@ export function SafrochainProvider({
   restEndpoint,
   walletConnectOptions,
   logLevel = 'NONE',
+  wallets,
   extraWallets,
   walletModal,
   lazyEndpoints = false,
@@ -134,16 +155,17 @@ export function SafrochainProvider({
 
   // Stable reference: prevents ChainProvider from tearing down and rebuilding
   // all wallet connections whenever a parent component re-renders.
-  // Mobile WalletConnect wallets are excluded when no walletConnectOptions are
-  // provided — they require a WalletConnect project ID and will log errors
-  // without one.
+  // - `wallets` prop fully overrides the default set.
+  // - Otherwise, WalletConnect (mobile) wallets are excluded when no
+  //   walletConnectOptions are provided to avoid 'missing project ID' errors.
   const allWallets = useMemo<MainWalletBase[]>(() => {
+    if (wallets) return wallets;
     const base = walletConnectOptions
       ? defaultWallets
       : defaultWallets.filter(w => w.walletInfo.mode !== 'wallet-connect');
     return extraWallets ? [...base, ...extraWallets] : base;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [walletConnectOptions, extraWallets]);
+  }, [wallets, walletConnectOptions, extraWallets]);
 
   // Build endpointOptions only when the caller provides overrides so we don't
   // shadow the chain's default endpoints unnecessarily.
